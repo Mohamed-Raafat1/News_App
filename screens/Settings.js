@@ -1,10 +1,12 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
+import i18n from "i18n-js";
 import { useContext, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { RadioButton } from "react-native-paper";
 import { ThemeContext } from "../context-store/context";
 const Settings = () => {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme, setTheme, language, setLanguage } = useContext(ThemeContext);
 
   useEffect(() => {
     console.log("theme changed");
@@ -16,17 +18,19 @@ const Settings = () => {
     >
       <View>
         <Text style={theme == "light" ? styles.title_light : styles.title_dark}>
-          App theme
+          {i18n.t("Settings.AppTheme")}
         </Text>
         <RadioButton.Group
-          onValueChange={(newValue) => setTheme(newValue)}
+          onValueChange={(newValue) => {
+            setTheme(newValue);
+          }}
           value={theme}
         >
           <View style={styles.radio_container}>
             <Text
-              style={theme == "light" ? styles.text_light : styles.text_dark}
+              style={theme === "light" ? styles.text_light : styles.text_dark}
             >
-              Light
+              {i18n.t("Settings.Light")}
             </Text>
             <RadioButton.Android
               value="light"
@@ -38,10 +42,47 @@ const Settings = () => {
             <Text
               style={theme == "light" ? styles.text_light : styles.text_dark}
             >
-              Dark
+              {i18n.t("Settings.Dark")}
             </Text>
             <RadioButton.Android
               value="dark"
+              color={theme === "light" ? "black" : "white"}
+              uncheckedColor={theme === "light" ? "black" : "white"}
+            />
+          </View>
+        </RadioButton.Group>
+      </View>
+      <View>
+        <Text style={theme == "light" ? styles.title_light : styles.title_dark}>
+          {i18n.t("Settings.AppLanguage")}
+        </Text>
+        <RadioButton.Group
+          onValueChange={(newValue) => {
+            console.log("This is the new value", newValue);
+            setLanguage(newValue);
+          }}
+          value={language}
+        >
+          <View style={styles.radio_container}>
+            <Text
+              style={theme === "light" ? styles.text_light : styles.text_dark}
+            >
+              {i18n.t("Settings.English")}
+            </Text>
+            <RadioButton.Android
+              value="en"
+              uncheckedColor={theme === "light" ? "black" : "white"}
+              color={theme === "light" ? "black" : "white"}
+            />
+          </View>
+          <View style={styles.radio_container}>
+            <Text
+              style={theme == "light" ? styles.text_light : styles.text_dark}
+            >
+              {i18n.t("Settings.French")}
+            </Text>
+            <RadioButton.Android
+              value="fr"
               color={theme === "light" ? "black" : "white"}
               uncheckedColor={theme === "light" ? "black" : "white"}
             />

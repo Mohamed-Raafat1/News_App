@@ -13,7 +13,10 @@ import { ThemeContext } from "../context-store/context";
 
 const win = Dimensions.get("window");
 const NewsCard = ({ news, navigation }) => {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme, setTheme, language } = useContext(ThemeContext);
+  useEffect(() => {
+    return () => {};
+  }, [language]);
   const [ImageUrl, setImage] = useState(news.urlToImage);
   const handlepress = (news) => {
     navigation.navigate("NewsDetails", news);
@@ -77,7 +80,8 @@ const NewsCard = ({ news, navigation }) => {
         source={{ uri: ImageUrl }}
         defaultSource={require("../unnamed.png")}
       />
-      <Divider />
+
+      <Divider inset={true} />
     </View>
   );
 };

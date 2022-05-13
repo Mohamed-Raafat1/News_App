@@ -7,6 +7,7 @@ import { ThemeContext } from "../context-store/context";
 import NewsDetails from "./NewsDetails";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
+import i18n from "i18n-js";
 
 const Stack = createNativeStackNavigator();
 const wait = (timeout) => {
@@ -42,7 +43,6 @@ const HomeScreen = ({ navigation }) => {
   }, []);
   useEffect(() => {}, [news]);
 
-  console.log(news.length);
   if (!news) return <Text> fuck</Text>;
 
   return (
@@ -75,7 +75,7 @@ const HomeStackScreen = ({ navigation }) => {
       <Stack.Screen
         options={{
           headerShown: true,
-          title: "Home",
+          title: i18n.t("navigation.Home"),
           headerTitleStyle: {
             color: theme === "light" ? "black" : "white",
           },
@@ -88,11 +88,15 @@ const HomeStackScreen = ({ navigation }) => {
       />
       <Stack.Screen
         options={{
-          title: "Details",
+          title: i18n.t("navigation.Details"),
+
           headerTitleStyle: {
             color: theme === "light" ? "black" : "white",
           },
           headerStyle: {
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
             backgroundColor: theme === "light" ? "white" : "black",
           },
 

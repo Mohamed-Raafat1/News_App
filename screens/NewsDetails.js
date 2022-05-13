@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text } from "react-native";
 import { Button, Card } from "react-native-paper";
 import { ThemeContext } from "../context-store/context";
+import i18n from "i18n-js";
 
 const win = Dimensions.get("window");
 const NewsDetails = ({ route, navigation }) => {
@@ -51,7 +52,7 @@ const NewsDetails = ({ route, navigation }) => {
               console.log(Linking.parse(link));
             }}
           >
-            Share
+            {i18n.t("Details.Share")}
           </Button>
           <Button
             style={{ alignSelf: "flex-end" }}
@@ -60,7 +61,7 @@ const NewsDetails = ({ route, navigation }) => {
               console.log(news.url);
             }}
           >
-            Go to full article
+            {i18n.t("Details.GoToArticle")}
           </Button>
         </Card.Actions>
       </Card>
