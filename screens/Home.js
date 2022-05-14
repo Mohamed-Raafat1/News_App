@@ -144,7 +144,10 @@ const HomeStackScreen = ({ navigation }) => {
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => {
-                navigation.goBack();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Home" }],
+                });
               }}
             >
               <Ionicons
