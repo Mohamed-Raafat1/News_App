@@ -1,13 +1,18 @@
+import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import i18n from "i18n-js";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Searchbar } from "react-native-paper";
 import newAPI from "../apis/News";
 import NewsCard from "../components/NewsCard";
 import { ThemeContext } from "../context-store/context";
 import NewsDetails from "./NewsDetails";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
-import i18n from "i18n-js";
 
 const Stack = createNativeStackNavigator();
 const wait = (timeout) => {
@@ -15,18 +20,31 @@ const wait = (timeout) => {
 };
 
 const HomeScreen = ({ navigation }) => {
-  const { theme, setTheme } = useContext(ThemeContext);
+  //consts
+  const [keyWord, setkeyWord] = useState("");
+  const [news, setNews] = useState([]);
+  const { theme, setTheme, language } = useContext(ThemeContext);
   const [Refreshing, setRefreshing] = useState(false);
+  const [Loading, setLoading] = useState(true);
+  //Pull to refresh function
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await getNewsFromAPI();
     setRefreshing(false);
-    console.log("done");
   }, []);
-  const [Loading, setLoading] = useState(true);
-  function getNewsFromAPI() {
+
+  //get news from newsapi.org based on keyword
+  //generic news provided if there is no keyword
+  function getNewsFromAPI(keyWords = "world") {
     newAPI
-      .get("everything?q=world&apiKey=0d4c4729aa7f415d8c6ea5ddb3382d64")
+      .get(
+        "everything?q=" +
+          keyWords +
+          "&language=" +
+          language +
+          "&apiKey=87eac6de1c49426fada443bc1687e911"
+      )
       .then(async function (response) {
         setNews(response.data.articles);
       })
@@ -37,13 +55,15 @@ const HomeScreen = ({ navigation }) => {
         setLoading(false);
       });
   }
-  const [news, setNews] = useState([]);
+
+  //update news on language change
+  useEffect(() => {
+    getNewsFromAPI();
+  }, [language]);
+  //get news on component mount
   useEffect(() => {
     getNewsFromAPI();
   }, []);
-  useEffect(() => {}, [news]);
-
-  if (!news) return <Text> fuck</Text>;
 
   return (
     <ScrollView
@@ -56,25 +76,44 @@ const HomeScreen = ({ navigation }) => {
         />
       }
     >
-      {news.map((object, index) => (
-        <View>
-          <NewsCard
-            key={index + object.urlToImage}
-            navigation={navigation}
-            news={object}
-          />
-        </View>
-      ))}
+      <Searchbar
+        placeholder="Input keyword here"
+        value={keyWord}
+        onChangeText={(newText) => {
+          setkeyWord(newText);
+        }}
+        //update news based on new keyword
+        onSubmitEditing={() => {
+          getNewsFromAPI(keyWord);
+        }}
+        onIconPress={() => {
+          getNewsFromAPI(keyWord);
+        }}
+      ></Searchbar>
+      {/* map each news article to a news card component */}
+      {news.length > 0 &&
+        news.map((object, index) => (
+          <View>
+            <NewsCard
+              key={index + object.urlToImage}
+              navigation={navigation}
+              news={{ ...object, keyWord, language }}
+            />
+          </View>
+        ))}
     </ScrollView>
   );
 };
 const HomeStackScreen = ({ navigation }) => {
-  const { theme, setTheme } = useContext(ThemeContext);
+  //theme const for darkmode
+  const { theme } = useContext(ThemeContext);
+  //creating the stack, Home-->Details
   return (
     <Stack.Navigator>
       <Stack.Screen
         options={{
           headerShown: true,
+
           title: i18n.t("navigation.Home"),
           headerTitleStyle: {
             color: theme === "light" ? "black" : "white",
@@ -93,13 +132,15 @@ const HomeStackScreen = ({ navigation }) => {
           headerTitleStyle: {
             color: theme === "light" ? "black" : "white",
           },
+
           headerStyle: {
+            //Remove the top border for header
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
             backgroundColor: theme === "light" ? "white" : "black",
           },
-
+          //Add the same back button for both platforms
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => {

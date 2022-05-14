@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import i18n from "i18n-js";
 import { useContext, useEffect } from "react";
@@ -6,11 +5,10 @@ import { StyleSheet, Text, View } from "react-native";
 import { RadioButton } from "react-native-paper";
 import { ThemeContext } from "../context-store/context";
 const Settings = () => {
+  //consts for changing themes and languages
   const { theme, setTheme, language, setLanguage } = useContext(ThemeContext);
 
-  useEffect(() => {
-    console.log("theme changed");
-  }, [theme]);
+  useEffect(() => {}, [theme]);
 
   return (
     <View
@@ -58,7 +56,6 @@ const Settings = () => {
         </Text>
         <RadioButton.Group
           onValueChange={(newValue) => {
-            console.log("This is the new value", newValue);
             setLanguage(newValue);
           }}
           value={language}

@@ -1,4 +1,3 @@
-// import createContext and useState
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createContext, useState, useEffect } from "react";
@@ -13,33 +12,37 @@ import fr from "../translations/fr";
 const ThemeContext = createContext();
 const initialValue = Appearance.getColorScheme();
 
-// Set the key-value pairs for the different languages you want to support.
+// key value pairs for french&english
 i18n.translations = {
   en: en,
   fr: fr,
 };
-console.log(i18n.translations);
 
 const ThemeProvider = ({ children }) => {
-  // Manage theme state
+  // Manage theme state & language
 
   const [theme, setTheme] = useState(Appearance.getColorScheme());
   const [language, setLanguage] = useState(Localization.locale.slice(0, 2));
   i18n.locale = language;
   useEffect(() => {
+    //get cached value of theme
     AsyncStorage.getItem("theme").then((value) => {
+      //if there is cached value use value
+      //if there is no value. it's initialized with device local language
       if (value) {
         setTheme(value);
       }
     });
-
+    //get cached value for language
     AsyncStorage.getItem("user-language").then((value) => {
       if (value) setLanguage(value);
     });
   }, []);
+  //if language changes cache the value
   useEffect(() => {
     AsyncStorage.setItem("user-language", language);
   }, [language]);
+  //if theme changes cache the value
   useEffect(() => {
     AsyncStorage.setItem("theme", theme);
   }, [theme]);

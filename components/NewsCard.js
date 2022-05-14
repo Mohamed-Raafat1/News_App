@@ -20,39 +20,15 @@ const NewsCard = ({ news, navigation }) => {
   const [ImageUrl, setImage] = useState(news.urlToImage);
   const handlepress = (news) => {
     navigation.navigate("NewsDetails", news);
-    console.log("iam here");
   };
-  const [Data, setData] = useState(null);
-  function handleDeepLink(event) {
-    console.log(event);
-    let data = Linking.parse(event.url);
 
-    console.log("anything");
-    setData(data);
-  }
-  useEffect(() => {
-    let Cleanup = Linking.addEventListener("xurl", handleDeepLink);
-
-    return () => {
-      Cleanup.remove();
-    };
-  }, []);
+  //parsing the date to a readable string
   let date = new Date(Date.parse(news.publishedAt));
-  if (!news.description) return null;
+  //rendering nothing if there is no description or author
+  if (!news.description || !news.author) return null;
 
   return (
-    <View
-      style={{
-        marginTop: 20,
-        marginBottom: 5,
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "flex-start",
-        alignContent: "flex-start",
-        borderBottomColor: "gray",
-      }}
-    >
+    <View style={styles.card_container}>
       <TouchableOpacity
         onPress={() => {
           handlepress(news);
@@ -86,6 +62,16 @@ const NewsCard = ({ news, navigation }) => {
   );
 };
 const styles = StyleSheet.create({
+  card_container: {
+    marginTop: 20,
+    marginBottom: 5,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    alignContent: "flex-start",
+    borderBottomColor: "gray",
+  },
   Image: {
     alignSelf: "flex-end",
     marginLeft: 10,
